@@ -11,7 +11,7 @@ pub struct MakeAddAccessControlOrigin<Inner>
     inner: Inner
 }
 
-pub impl<Inner, Target> Service<Target> for MakeAddAccessControlOrigin<Inner>
+impl<Inner, Target> Service<Target> for MakeAddAccessControlOrigin<Inner>
 where
     Inner: Service<Target>,
     Inner::Future: Send + 'static,
@@ -40,7 +40,7 @@ pub struct AddAccessControlOrigin<T>
 }
 
 
-pub impl<T, B, RC> Service<(Request<B>, RC)> for AddAccessControlOrigin<T>
+impl<T, B, RC> Service<(Request<B>, RC)> for AddAccessControlOrigin<T>
 where
     T: Service<(Request<B>, RC), Response=hyper::Response<B>>,
     T::Future: Send + Sync + 'static

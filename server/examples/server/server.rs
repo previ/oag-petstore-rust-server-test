@@ -22,8 +22,8 @@ use openssl::ssl::{Ssl, SslAcceptor, SslAcceptorBuilder, SslFiletype, SslMethod}
 
 use openapi_client::models;
 
-mod cors;
-use cors::MakeAddAccessControlOrigin;
+//mod cors;
+use openapi_client::cors::MakeAddAccessControlOrigin;
 
 /// Builds an SSL implementation for Simple HTTPS from some hard-coded file names
 pub async fn create(addr: &str, https: bool) {
