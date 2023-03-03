@@ -6,18 +6,28 @@ use hyper::Request;
 use std::task::{Poll, Context};
 
 #[derive(Debug, Clone)]
-pub struct MakeAddAccessControlOrigin<Inner>
+pub struct MakeAddAccessControlOrigin<T>
 {
-    inner: Inner
+    inner: T
 }
 
-impl<Inner, Target> Service<Target> for MakeAddAccessControlOrigin<Inner>
-where
-    Inner: Service<Target>,
-    Inner::Future: Send + 'static,
+impl<T> MakeAddAccessControlOrigin<T>
 {
-    type Error = Inner::Error;
-    type Response = AddAccessControlOrigin<Inner::Response>;
+    /// Create a middleware that authorizes with the configured subject.
+    pub fn new(inner: T) -> Self {
+        MakeAddAccessControlOrigin {
+            inner
+        }
+    }
+}
+
+impl<T, Target> Service<Target> for MakeAddAccessControlOrigin<T>
+where
+    T: Service<Target>,
+    T::Future: Send + 'static,
+{
+    type Error = T::Error;
+    type Response = AddAccessControlOrigin<T::Response>;
     type Future = BoxFuture<'static, Result<Self::Response, Self::Error>>;
 
     fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
@@ -43,7 +53,7 @@ pub struct AddAccessControlOrigin<T>
 impl<T, B, RC> Service<(Request<B>, RC)> for AddAccessControlOrigin<T>
 where
     T: Service<(Request<B>, RC), Response=hyper::Response<B>>,
-    T::Future: Send + Sync + 'static
+    T::Future: Send + 'static
 {
     type Response = hyper::Response<B>;
     type Error = T::Error;

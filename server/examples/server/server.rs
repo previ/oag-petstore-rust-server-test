@@ -35,7 +35,7 @@ pub async fn create(addr: &str, https: bool) {
 
     let service = MakeAllowAllAuthenticator::new(service, "cosmo");
 
-    let service = MakeAddAccessControlOrigin{inner: service};
+    let service = MakeAddAccessControlOrigin::new(service);
 
     #[allow(unused_mut)]
     let mut service =
